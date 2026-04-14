@@ -1,0 +1,179 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="/css/styles.css"></style>
+    <script src="/js/scripts.js"></script>
+</head>
+<body>
+    <div class="admMainTopPanel">
+        <div style="width: 15vw;">
+            <form action="/logout" method="post">
+                <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                <input class="button" type="submit" value="Выйти"/>
+            </form>
+            <form action="/resetPassword" method="post">
+                <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                <input class="button" type="submit" value="Сменить пароль"/>
+            </form>
+        </div>
+        <div>
+            <div style="background-color: rgba(255, 255, 255, .015); padding: 2vw; border-radius: 0.5vw; box-shadow: 0px -10vw 100vw 150px #220033;">
+                <p style="text-align: center; font-size: 1.5vw;">Форма добавления изображений</p>
+                <form method="post" enctype="multipart/form-data">
+                    <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                    <div style="display: flex; justify-content: space-evenly;">
+                        Имя папки:<br>
+                        <input list="folders" id="name" name="name" placeholder="Введите имя папки" class="formTextInput">
+                    </div>
+                    <datalist id="folders">
+                        {{#folders}}
+                        <option value="{{name}}">
+                        {{/folders}}
+                    </datalist>
+                    <br>
+                    <div style="display: flex; justify-content: center;">
+                        <label class="button">Выбрать файлы
+                            <input type="file" name="file" id="file" multiple hidden/>
+                        </label>
+                        <button class="button" id="addButton" type="submit" style="display: none">Добавить выбранное</button>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                </form>
+            </div>
+        </div>
+        <div style="width: 18.6vw; height: 19.6vw; background-color: #222222">
+            <div style="text-align: center; background-color: #333333; place-content: center; height: 2vw; font-size: 1vw;">
+                Порядок работ
+            </div>
+            <div id="order_section_list" style="overflow: auto; height: 17.6vw;">
+                {{#folders}}
+                        <div id="{{id}}" class="order" style="height: 5vw; display: flex; padding-top: 1vw; padding-bottom: 1vw; padding-left: 1vw">
+                            <div style="width: 5vw; height: 5vw">
+                                {{#preview}}
+                                    <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img">
+                                {{/preview}}
+                                {{^preview}}
+                                    <img src="{{artworks.0.url}}" alt="{{name}}" id="{{id}}" class="ad_img">
+                                {{/preview}}
+                            </div>
+                            <div style="margin-left: 10px; font-size: 1vw; width: 40%">{{name}}</div>
+                            <div style="width: 10%; font-size: 1.5vw; text-align: center; place-content: center;">
+                                <button class="button orderButtonUp" onclick="swap(-1, this.parentNode)" style="display: none">↑</button>
+                                <button class="button orderButtonDown" onclick="swap(1, this.parentNode)" style="display: none">↓</button>
+                            </div>
+                        </div>
+                {{/folders}}
+            </div>
+            <div>
+                <button class="orderEditButton" id="editOrderButton" style="height: 2vw; width: 2vw; position: relative; top: -19.6vw; left: 18.65vw; place-content: center" onclick="toggleOrderEditMode()">
+                    ✏️
+                </button>
+                <form action="/greeting/folder/order/edit" method="post">
+                    <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                    <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+                    <input id="newOrder" name="newOrder" hidden>
+                    <button class="orderEditButton" id="editOrderButtonApply" style="height: 2vw; width: 2vw; position: relative; top: -19.6vw; left: 18.65vw; place-content: center; display: none" onclick="applyOrder()">
+                        ✅
+                    </button>
+                </form>
+                <button class="orderEditButton" id="editOrderButtonCancel" style="height: 2vw; width: 2vw; position: relative; top: -19.6vw; left: 18.65vw; place-content: center; display: none" onclick="toggleOrderEditMode()">
+                    ❌
+                </button>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: right; text-align: right; width: 15vw;">
+            <div>
+                <button class="button" id="pickingModeToggleButton" onclick="togglePickingMode()">Выделение</button>
+                <br>
+                <form method="post">
+                    <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                    <input type="hidden" id="folder" name="folder" value="{{#folder}}{{id}}{{/folder}}"/>
+                    <input type="hidden" id="picked_folders_list" name="picked_folders_list">
+                    <button class="button marking" style="width: 100%; display: none;" type="submit" formaction="/greeting/folder/delete">Удалить</button><br>
+                    <button class="button marking" style="width: 100%; display: none;" type="submit" formaction="/greeting/folder/toggleVisibility">Скрыть/Показать</button><br>
+                    <button class="button marking" style="width: 100%; display: none;" type="submit" formaction="/greeting/folder/toggleFeatured">Портфолио/Не портфолио</button><br>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div>
+        <p>Выбранные как портфолио</p>
+        <div style="margin-left: 10vw; margin-right: 10vw; display: flex; flex-wrap: wrap">
+            {{#folders}}
+                {{#isVisible}}
+                    {{#isFeatured}}
+                        <div style="width: 15.6vw; height: 15.6vw">
+                            <a href="/greeting/{{id}}">
+                                {{#preview}}
+                                    <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                                {{/preview}}
+                                {{^preview}}
+                                    <img src="{{artworks.0.url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                                {{/preview}}
+                            </a>
+                        </div>
+                    {{/isFeatured}}
+                {{/isVisible}}
+            {{/folders}}
+        </div>
+    </div>
+    <div>
+        <p>Остальные работы</p>
+        <div style="margin-left: 10vw; margin-right: 10vw; display: flex; flex-wrap: wrap">
+            {{#folders}}
+                {{#isVisible}}
+                    {{^isFeatured}}
+                        <div style="width: 15.6vw; height: 15.6vw">
+                            <a href="/greeting/{{id}}">
+                                {{#preview}}
+                                    <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                                {{/preview}}
+                                {{^preview}}
+                                    <img src="{{artworks.0.url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                                {{/preview}}
+                            </a>
+                        </div>
+                    {{/isFeatured}}
+                {{/isVisible}}
+            {{/folders}}
+        </div>
+    </div>
+    <div>
+        <p>Скрытые работы</p>
+        <div style="margin-left: 10vw; margin-right: 10vw; display: flex; flex-wrap: wrap">
+            {{#folders}}
+                {{^isVisible}}
+                    <div style="width: 15.6vw; height: 15.6vw">
+                        <a href="/greeting/{{id}}">
+                            {{#preview}}
+                                <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                            {{/preview}}
+                            {{^preview}}
+                                <img src="{{artworks.0.url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                            {{/preview}}
+                        </a>
+                    </div>
+                {{/isVisible}}
+            {{/folders}}
+        </div>
+    </div>
+    <script>
+        const fileInput = document.getElementById('file');
+        const addButton = document.getElementById('addButton');
+
+        fileInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                console.log('Файл выбран:', this.files[0].name);
+                addButton.style.display = 'block';
+            } else {
+                console.log('Файл не выбран (или нажата "Отмена")');
+                addButton.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

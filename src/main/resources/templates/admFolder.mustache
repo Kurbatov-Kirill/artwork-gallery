@@ -1,0 +1,151 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="/css/styles.css"></style>
+    <script src="/js/scripts.js"></script>
+</head>
+<body>
+<div class="admMainTopPanel">
+    <div>
+        <form action="/logout" method="post">
+            <input name="_csrf" value="{{_csrf.token}}" hidden/>
+            <input class="button" type="submit" value="Выйти"/>
+        </form>
+    </div>
+    <div>
+        <a class="button" href="/greeting"><= Назад</a>
+    </div>
+    <div id="custom-menu" class="custom-menu">
+        <ul>
+            <li onclick="handleOption1()">Option 1</li>
+            <li onclick="handleOption2()">Option 2</li>
+        </ul>
+    </div>
+    <div style="align-content: center; font-size: 1.25vw;">
+        Добавить (в эту папку):
+    </div>
+    <div>
+        <form method="post" enctype="multipart/form-data" action="/greeting/addFromFolder">
+            <input name="_csrf" value="{{_csrf.token}}" hidden/>
+            <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+            <input type="text" id="name" name="name" value="{{folder.name}}" hidden/>
+            <input type="file" name="file" multiple/>
+
+            <button class="button" type="submit">Добавить</button>
+        </form>
+    </div>
+    <div>
+        <form method="post">
+            <input name="_csrf" value="{{_csrf.token}}" hidden/>
+            <input type="hidden" id="folder" name="folder" value="{{#folder}}{{id}}{{/folder}}"/>
+            <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+            <input type="hidden" id="picked_img_list" name="picked_img_list">
+            <button class="button marking" style="display: none;" type="submit" formaction="/greeting/delete">Удалить</button>
+            <button class="button marking" style="display: none;" type="submit" formaction="/greeting/toggleVisibility">Скрыть/Показать</button>
+            <button class="button marking" style="display: none;" type="submit" formaction="/greeting/setPreview">Превью</button>
+        </form>
+    </div>
+    <div>
+        <button class="button" id="pickingModeToggleButton" onclick="togglePickingMode()">Выделение</button>
+    </div>
+</div>
+<div>
+    <div style="justify-content: center; display: flex; flex-wrap: wrap">
+        {{#folder}}
+            <div style="width: 19.6vw; height: 19.6vw">
+                    {{#preview}}
+                        <img src="{{url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img">
+                    {{/preview}}
+                    {{^preview}}
+                        <img src="{{artworks.0.url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img">
+                    {{/preview}}
+            </div>
+            <div style="width: 39.2vw; height: 19.6vw; background-color: #111111">
+                <h1>{{name}}</h1>
+                <p>
+                    {{#description}}
+                        {{description}}
+                    {{/description}}
+                    {{^description}}
+                        Описания пока нет
+                    {{/description}}
+                </p>
+                <form method="post" id="edit_form" hidden>
+                    <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                    <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+                    <input type="text" id="folder" name="folder" value="{{folder.id}}" hidden/>
+                    <input type="text" id="folder_name" name="folder_name" value="{{#name}}{{name}}{{/name}}">
+                    <input type="text" id="folder_description" name="folder_description" value="{{#description}}{{description}}{{/description}}">
+                    <button formaction="folder/edit">Применить</button>
+                </form>
+                <button id="showEditFormButton" onclick="showEditForm()">(изменить)</button>
+                <button id="hideEditFormButton" onclick="hideEditForm()" hidden>Отмена</button>
+            </div>
+        {{/folder}}
+        <div style="width: 18.6vw; height: 19.6vw; background-color: #222222">
+            <div style="text-align: center; background-color: #333333; place-content: center; height: 2vw; font-size: 1vw;">
+                Порядок изображений
+            </div>
+            <div id="order_section_list" style="overflow: auto; height: 17.6vw;">
+                {{#artworks}}
+                    {{#isVisible}}
+                        <div id="{{id}}" class="order" style="height: 5vw; display: flex; padding-top: 1vw; padding-bottom: 1vw; padding-left: 1vw">
+                            <div style="width: 5vw; height: 5vw">
+                                <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img">
+                            </div>
+                            <div style="margin-left: 10px; font-size: 1vw; width: 40%">{{name}}</div>
+                            <div style="width: 10%; font-size: 1.5vw; text-align: center; place-content: center;">
+                                <button class="button orderButtonUp" onclick="swap(-1, this.parentNode)" style="display: none">↑</button>
+                                <button class="button orderButtonDown" onclick="swap(1, this.parentNode)" style="display: none">↓</button>
+                            </div>
+                        </div>
+                    {{/isVisible}}
+                {{/artworks}}
+            </div>
+        </div>
+            <button class="orderEditButton" id="editOrderButton" style="height: 2vw; width: 2vw; position: relative; top: 2vw; place-content: center" onclick="toggleOrderEditMode()">
+                ✏️
+            </button>
+            <form action="/greeting/artwork/order/edit" method="post">
+                <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+                <input id="folder" name="folder" value="{{folder.id}}" hidden>
+                <input id="newOrder" name="newOrder" hidden>
+                <button class="orderEditButton" id="editOrderButtonApply" style="height: 2vw; width: 2vw; position: relative; top: 2vw; place-content: center; display: none" onclick="applyOrder()">
+                    ✅
+                </button>
+            </form>
+            <button class="orderEditButton" id="editOrderButtonCancel" style="height: 2vw; width: 2vw; position: relative; top: 4vw; left: -2vw; place-content: center; display: none" onclick="toggleOrderEditMode()">
+                ❌
+            </button>
+    </div>
+</div>
+<div>
+    <p></p>
+    <div style="margin-left: 10vw; margin-right: 10vw; display: flex; flex-wrap: wrap">
+        <div style="width: 100%"><p>Отображаемые для всех</p></div>
+        {{#artworks}}
+            {{#isVisible}}
+                <div style="width: 15.6vw; height: 15.6vw" class="pickable">
+                    <a href="{{folder.id}}/artwork/{{id}}">
+                        <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                    </a>
+                </div>
+            {{/isVisible}}
+        {{/artworks}}
+        <div style="width: 100%"><p>Скрытые</p></div>
+        {{#artworks}}
+            {{^isVisible}}
+                <div style="width: 15.6vw; height: 15.6vw" class="pickable">
+                    <a href="{{folder.id}}/artwork/{{id}}">
+                        <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="pickElem(event, this, this.parentNode)"><div class="checkbox"></div>
+                    </a>
+                </div>
+            {{/isVisible}}
+        {{/artworks}}
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <title>{{folder.name}} by Kappi</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link rel="stylesheet" href="/css/artworkStyles.css"></style>
+    </head>
+    <body>
+        <h1>{{folder.name}}</h1>
+        <div class="grid">
+            <div class="container_main">
+                <div class="viewer">
+                    {{#artworks}}
+                        {{#isVisible}}
+                            <img class="viewer_pic" src="{{url}}"><br>
+                        {{/isVisible}}
+                    {{/artworks}}
+                </div>
+                {{#prevFolderId}}
+                    <div class="navigation_l">
+                        <a href="{{prevFolderId}}">
+                            <button class="nav_button">
+                                ←
+                            </button>
+                        </a>
+                    </div>
+                {{/prevFolderId}}
+                {{#nextFolderId}}
+                    <div class="navigation_r">
+                        <a href="{{nextFolderId}}">
+                            <button class="nav_button">
+                                →
+                            </button>
+                        </a>
+                    </div>
+                {{/nextFolderId}}
+            </div>
+            <div class="container_side">
+                <div class="side_header">
+                    {{folder.name}}
+                </div>
+                <div class="side_container">
+                    {{#folder.description}}
+                        {{folder.description}}
+                    {{/folder.description}}
+                    {{^folder.description}}
+                        Описания пока нет
+                    {{/folder.description}}
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

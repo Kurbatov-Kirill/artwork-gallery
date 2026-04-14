@@ -1,0 +1,243 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https:\\cdn.tailwindcss.com"></script>
+    <script src="
+        https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    ></script>
+    <link rel="stylesheet" href="
+        https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css"
+    >
+    <script src="
+        https://code.jquery.com/ui/1.13.3/jquery-ui.js"
+    ></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LevJ2wqAAAAAC1yqVvAe4T6HVOsTEE6CrtAdE96"></script>
+
+    <script>
+        function onSubmit(token) {
+            document.getElementById("contact-form").submit();
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/styles.css"></style>
+
+    <title>Kappi port</title>
+</head>
+<body>
+
+<div id="black_screen" hidden><button id="black_screen_exit" style="width:100%; height: 100%"></button></div>
+<div class="div_panel" style='background-image: url("images/222.jpg"), linear-gradient(45deg, rgba(16, 0, 32, 1) 0%, rgba(32, 0, 64, 1) 66%, rgba(255, 128, 0, 1) 100%); background-size: cover;'>
+    <div style='width: 100%; height: 50px; position: relative;'>
+        <div class="wrap">
+            <img src="images/punktir2.png" class="myImage">
+        </div>
+        <table class="panel">
+            <td id="home_" class="cell">
+                <a href="#home" class="active">Home</a>
+            </td>
+            <td id="portfolio_" class="cell">
+                <a href="#portfolio">Portfolio</a>
+            </td class="cell">
+            <td id="other_works_" class="cell">
+                <a href="#other_works">Other works</a>
+            </td class="cell">
+            <td id="about_" class="cell">
+                <a href="#about">About</a>
+            </td>
+            <td id="contacts_" class="cell">
+                <a href="#contacts">Contacts</a>
+            </td>
+        </table>
+    </div>
+</div>
+
+<div id="c_container">
+    <section id='home' style="background-image: linear-gradient(270deg, rgba(25, 15, 15, .99) 0%, rgba(10, 0, 25, .0) 49%, rgba(64, 50, 35, 0.5) 50%, rgba(128, 100, 70, .5) 50%, rgba(64, 50, 40, .85) 100%), url('images/maxresdefault-(1з).jpg'); background-size: cover;">
+        <div class="main" id="home">
+            <div class="main_left"><p class="title">Kappi</br>Concept artist</p></div>
+            <div class="main_right" >
+                <div class="lamp" >
+
+                </div>
+                <p class="title"></p>
+            </div>
+        </div>
+        <div class="divider">
+
+        </div>
+    <br>
+    </section>
+
+    <section id='portfolio'>
+        <div id="viewer" style="display: none">
+            <div id="viewer_row_">
+                <div id="viewer_photos_side">
+                    <div class="photo_view">
+                        <div class="photo_view_pic">
+                            <a class="photo_view_pic_area" id="picture_v_" style='display: block; background-repeat: no-repeat; background-size: contain; background-image: url(""); background-position: center; width: 100%; height: 100%; '><?php $viewerPicId++;?>
+                                <div class="photo_overlay" style='display: table; width: 100%; height: 100%;'>
+                                    <div class="photo_overlay_row" style='display: table-row;width: 100%; height: 100%;'>
+                                        <div class="photo_overlay_cell_left" style='display: table-cell; background-repeat: no-repeat; background-size: contain; background-image: url("arrow_painted_1.png"); background-position: center; width: 9%; height: 100%;'><button style='width: 100%; height: 100%;' class="pic_prev"></button>
+                                        </div>
+                                        <div class="photo_overlay_cell_mid" style='display: table-cell; width: 80%; height: 1%;'>
+                                        </div>
+                                        <div class="photo_overlay_cell_right" style='display: table-cell; background-repeat: no-repeat; background-size: contain; background-image: url("arrow_painted.png"); background-position: center; width: 9%; height: 100%;'><button style='width: 100%; height: 100%;' class="pic_next"></button>
+                                        </div>
+                                        <div class="photo_overlay_cell_close" style='display: table-cell; background-repeat: no-repeat; background-size: contain; background-image: url("cross.png"); background-position: top; width: 2%; height: 100%; align-content: stretch;'><button style='width: 100%; height: 3%;' class="pic_close"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="viewer_info_side">
+                    <div class="info_view">
+                        <div class="info_view_block">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="main_2" id="portfolio">
+            {{#folders}}
+                {{#isFeatured}}
+                    {{#isVisible}}
+                        <div style="width: 19.6vw; height: 19.6vw">
+                            <a href="/art/{{id}}">
+                                {{#preview}}
+                                    <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="changeStyle(this)">
+                                {{/preview}}
+                                {{^preview}}
+                                    <img src="{{artworks.0.url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img" onclick="changeStyle(this)">
+                                {{/preview}}
+                            </a>
+                        </div>
+                    {{/isVisible}}
+                {{/isFeatured}}
+            {{/folders}}
+        </div>
+    </section>
+
+    <div class="divider">
+
+    </div>
+
+    <section id='other_works'>
+        <div class="main_2_1" id="other_works">
+            <div class="pics" style="display: flex; flex-wrap: wrap;">
+                {{#folders}}
+                    {{^isFeatured}}
+                        {{#isVisible}}
+                            <div style="width: 19.6vw; height: 19.6vw">
+                                <a href="/art/{{id}}">
+                                    {{#preview}}
+                                        <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img" onclick="changeStyle(this)">
+                                    {{/preview}}
+                                    {{^preview}}
+                                        <img src="{{artworks.0.url}}" alt="{{artworks.0.name}}" id="{{id}}" class="ad_img" onclick="changeStyle(this)">
+                                    {{/preview}}
+                                </a>
+                            </div>
+                        {{/isVisible}}
+                    {{/isFeatured}}
+                {{/folders}}
+            </div>
+        </div>
+    </section>
+
+    <section id='about'>
+        <div class="main_3" id="about">
+            <div class="photo">
+                <table class="photo">
+                    <td class="photo_holder">
+                        <img src="images/me.jpg"><img>
+                    </td>
+                </table>
+            </div>
+            <div class="about">
+                <p>
+                    Kappi
+                </p>
+                </br>
+                <p style="float: left; margin-left: 80px;">
+                    I...
+                </p>
+                </br>
+                <hr>
+                <p style="float: left; margin-left: 80px;">
+                    Me...
+                </p>
+                </br>
+                <hr>
+                </br>
+                </br>
+                </br>
+                </br>
+                <p style="float: right; margin-right: 400px;">...</p>
+            </div>
+        </div>
+    </section>
+
+    <section id='contacts'>
+        <div class="main_4" id="contacts">
+
+            <p class="ml-10">Get in touch</p>
+
+            <div style="width: 800px;" class="ml-20 mt-10">
+                <form method="POST" action="/send" id="contact-form">
+                    <input type="hidden" name="_csrf" value="{_csrf.token}"/>
+
+                    <table style="width: 100%">
+                        <tr>
+                            <label for="first_name" class="block text-sm font-medium leading-6 text-gray-100">Name</label>
+                            <input type="text" name="first_name" id="first_name" class="shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600  border-0 bg-transparent py-1.5 px-3 text-gray-100 placeholder:text-gray-300 w-1/2" placeholder="Name" required>
+                            <input type="text" name="last_name" id="last_name" class="shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600  border-0 bg-transparent py-1.5 px-3 text-gray-100 placeholder:text-gray-300 w-1/2" placeholder="Last name" required>
+                            <p class="text-xs text-red-500 font-semibold mt-1"></p>
+                            <p class="text-xs text-red-500 font-semibold mt-1"></p>
+                        </tr>
+                        <tr>
+                            <label for="email" class="block text-sm font-medium leading-6 text-gray-100">Email</label>
+                            <input type="text" name="email" id="email" class="shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600  border-0 bg-transparent py-1.5 px-3 text-gray-100 placeholder:text-gray-300 w-full" placeholder="Email" required>
+                        </tr>
+                        <tr>
+
+                            <label for="message" class="block text-sm font-medium leading-6 text-gray-100">Message</label>
+                            <textarea type="text" name="message" id="message" class="shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 border-0 bg-transparent py-1.5 px-3 text-gray-100 placeholder:text-gray-300 focus:ring-0 sm:text-sm w-full" placeholder="..." required cols="40" rows="5"></textarea>
+                            <input type="hidden" id="token" name="token">
+                            <input type="hidden" id="g-recaptcha-response" name="g-recaptcha-response"/><br/><br/>
+                        </tr>
+                        <tr>
+                            <button type="submit" <button class="g-recaptcha"
+                                                          data-sitekey="reCAPTCHA_site_key"
+                                                          data-callback='onSubmit'
+                                                          data-action='submit'>Send</button>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <section id='get_in_touch'>
+        <div class="main_5" id="get_in_touch">
+            <div class="table w-full h-full">
+                <div class="table-row w-full h-full">
+
+                    <div class="table-cell w-4/12 h-full align-middle text-center" style="background-image: linear-gradient(90deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 100%); text-align: -webkit-center;">
+                        <div>Want to work together?</div>
+                        </br>
+                        <div class="qr"></div>
+                    </div>
+                    <div class="table-cell w-8/12 h-full" style="background-image: linear-gradient(90deg, rgba(0, 0, 0, .99) 0%, rgba(0, 0, 0, .5) 33%, rgba(0, 0, 0, 0.5) 34%, rgba(0, 0, 0, .25) 51%), url('images/pelikan1.jpg'); background-size: cover;">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+</body>
+</html>

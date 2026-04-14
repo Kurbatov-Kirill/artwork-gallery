@@ -1,0 +1,186 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" href="/css/styles.css"></style>
+    <script>
+        let isPickingModeActive = false;
+        let pickedImages = [];
+    </script>
+    <script>
+        function togglePickingMode() {
+            isPickingModeActive = !isPickingModeActive;
+            if (isPickingModeActive) {
+                const elems = document.getElementsByClassName("checkbox");
+
+                for (let i = 0; i < elems.length; i++) {
+                    elems[i].style.display = 'block'
+                }
+            } else {
+                const elems = document.getElementsByClassName("checkbox");
+
+                for (let i = 0; i < elems.length; i++) {
+                    if(elems[i].classList.contains("picked")) {
+                        elems[i].classList.remove("picked")
+                    }
+                    elems[i].style.display = 'none'
+                }
+                pickedImages.length = 0
+            }
+        }
+    </script>
+    <script>
+        function pickElem(image, container) {
+            if (isPickingModeActive) {
+                let list = document.getElementById("picked_img_list");
+
+                let checkbox = container.querySelector('.checkbox');
+                console.log(image.id);
+                if (checkbox && !checkbox.classList.contains("picked")) {
+                    checkbox.classList.add("picked");
+                    pickedImages.push(image.id);
+                    list.value = pickedImages;
+                } else if (checkbox && checkbox.classList.contains("picked")) {
+                    checkbox.classList.remove("picked");
+                    pickedImages.splice(pickedImages.indexOf(image.id));
+                    list.value = pickedImages;
+                } else {
+                    console.error("Element provided is null or undefined.");
+                }
+                console.log(pickedImages);
+            }
+
+            // Returns a live HTMLCollection
+        }
+
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        const customMenu = document.getElementById("custom-menu");
+        const images = document.querySelectorAll('.ad_img');
+
+        images.forEach(image => {
+            image.addEventListener('contextmenu', function(e) {
+                e.preventDefault(); // Prevent the default browser menu
+
+                // Position the custom menu at the cursor's location
+                customMenu.style.top = `${e.pageY}px`;
+                customMenu.style.left = `${e.pageX}px`;
+                customMenu.style.display = 'block';
+
+                // Optional: Store information about the clicked image if needed
+                // customMenu.dataset.imageUrl = e.target.src;
+            });
+        });
+
+        // Function to prevent default context menu and show custom menu
+
+
+        // Function to hide the custom menu when clicking elsewhere
+        document.addEventListener("click", () => {
+            customMenu.style.display = "none";
+        });
+
+
+    });
+
+    // Define functions for menu options
+    function handleOption1() {
+        alert("Option 1 clicked!");
+        //customMenu.style.display = "none";
+    }
+
+    function handleOption2() {
+        alert("Option 2 clicked!");
+        //customMenu.style.display = "none";
+    }
+
+    </script>
+    <script>
+        function showEditForm() {
+            let form = document.getElementById("edit_form");
+            form.style.display = "block";
+            document.getElementById("showEditFormButton").style.display = "none";
+            document.getElementById("hideEditFormButton").style.display = "block";
+        }
+
+        function hideEditForm() {
+            let form = document.getElementById("edit_form");
+            form.style.display = "none";
+            document.getElementById("showEditFormButton").style.display = "block";
+            document.getElementById("hideEditFormButton").style.display = "none";
+        }
+    </script>
+</head>
+<body>
+<div>
+    <h1>{{artwork.name}}</h1>
+</div>
+<div id="custom-menu" class="custom-menu">
+    <ul>
+        <li onclick="handleOption1()">Option 1</li>
+        <li onclick="handleOption2()">Option 2</li>
+        <!-- Add more options as needed -->
+    </ul>
+</div>
+<div>
+    <form method="post" enctype="multipart/form-data" action="/greeting/artwork/move">
+        <input name="_csrf" value="{{_csrf.token}}" hidden/>
+        <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+        <input type="text" id="artwork" name="artwork" value="{{artwork.id}}" hidden>
+        <input list="folders" id="destination_folder_id" name="destination_folder_id" placeholder="Папка">
+        <datalist id="folders">
+            {{#folders}}
+            <option value="{{name}}">
+            {{/folders}}
+        </datalist>
+
+        <button class="button" type="submit">Переместить</button>
+        <br>
+        <br>
+    </form>
+</div>
+<div>
+    <a class="button" href="/greeting/{{folder}}"><= Назад</a>
+</div>
+<div>
+    <div style="justify-content: center; display: flex; flex-wrap: wrap">
+        {{#artwork}}
+            <div style="width: 19.6vw; height: 19.6vw">
+                <img src="{{url}}" alt="{{name}}" id="{{id}}" class="ad_img">
+            </div>
+            <div style="width: 39.2vw; height: 19.6vw; background-color: #111111">
+                <h1>
+                    {{#name}}
+                        {{name}}
+                    {{/name}}
+                    {{^name}}
+                        Названия пока нет
+                    {{/name}}
+                </h1>
+                <p>
+                    {{#description}}
+                        {{description}}
+                    {{/description}}
+                    {{^description}}
+                        Описания пока нет
+                    {{/description}}
+                </p>
+                <form method="post" id="edit_form" hidden>
+                    <input name="_csrf" value="{{_csrf.token}}" hidden/>
+                    <input type="hidden" name="returnUrl" value="{{currentUrl}}">
+                    <input type="text" id="artwork" name="artwork" value="{{id}}" hidden/>
+                    <input type="text" id="artwork_name" name="artwork_name" value="{{#name}}{{name}}{{/name}}">
+                    <input type="text" id="artwork_description" name="artwork_description" value="{{#description}}{{description}}{{/description}}">
+                    <button formaction="/greeting/artwork/edit">Применить</button>
+                </form>
+                <button id="showEditFormButton" onclick="showEditForm()">(изменить)</button>
+                <button id="hideEditFormButton" onclick="hideEditForm()" hidden>Отмена</button>
+            </div>
+        {{/artwork}}
+    </div>
+</div>
+</body>
+</html>
